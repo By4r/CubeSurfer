@@ -40,6 +40,7 @@ MonoBehaviour:
     - NonConvexCollider
     - Boxophobic.PolyverseSkies.Scripts
     - NonConvexColliderRuntimeAPI
+    - Cinemachine
     - Sirenix.OdinInspector.CompatibilityLayer.Editor
     - Boxophobic.Utils.Editor
     - PPv2URPConverters
