@@ -21,9 +21,6 @@ namespace Controllers.Player
         #region Private Variables
 
         [ShowInInspector] private bool inCollision;
-
-        [ShowInInspector] private float speed;
-
         [ShowInInspector] private GameObject lastCollision = null;
         [ShowInInspector] private Transform characterTransform;
 
@@ -34,7 +31,7 @@ namespace Controllers.Player
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.CompareTag("Pickup") && !inCollision)
+            if (other.CompareTag("Collectable") && !inCollision)
             {
                 if (other.gameObject != lastCollision)
                 {
@@ -44,7 +41,7 @@ namespace Controllers.Player
                     characterTransform.position += Vector3.up * 0.25f;
                     other.transform.parent = transform;
                     lastCollision = other.gameObject;
-                    
+
                     InputSignals.Instance.onDisableInput?.Invoke();
                 }
 
@@ -52,32 +49,29 @@ namespace Controllers.Player
             }
             else if (other.gameObject.CompareTag("Wall") || other.gameObject.CompareTag("Obstacle"))
             {
-                var thisCollider = other.contacts[0].thisCollider.transform;
-                
                 if (lastCollision != null)
                 {
                     lastCollision.transform.parent = null;
                 }
 
                 inCollision = true;
-                
+
                 if (transform.childCount < 3)
                 {
                     CoreGameSignals.Instance.onLevelFailed?.Invoke();
                 }
                 else
                 {
-                    var shrinkAmount = transform.child;
-                    Count / 4.0f;
-                    var newScale = transform.localScale - new Vector3(shrinkAmount, shrinkAmount, shrinkAmount);
+                    float shrinkAmount = transform.childCount / 4.0f;
+                    Vector3 newScale = transform.localScale - new Vector3(shrinkAmount, shrinkAmount, shrinkAmount);
                     transform.DOScale(newScale, 0.5f);
                     if (other.gameObject.CompareTag("Wall"))
                     {
                         CoreGameSignals.Instance.onLevelFailed?.Invoke();
                     }
-                    else // Obstacle
+                    else // Multiplier
                     {
-                        CoreGameSignals.Instance.onLevelSuccessful();
+                        CoreGameSignals.Instance.onLevelSuccessful?.Invoke();
                     }
                 }
             }
@@ -97,8 +91,10 @@ namespace Controllers.Player
             {
                 Destroy(child.gameObject);
             }
+
             transform.localScale = Vector3.one;
             lastCollision = null;
             inCollision = false;
         }
     }
+}

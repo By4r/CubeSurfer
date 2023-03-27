@@ -33,13 +33,6 @@ namespace Controllers.UI
             //Instance.onSetStageColor += OnSetStageColor;
         }
 
-        private void OnSetNewLevelValue(int levelValue)
-        {
-
-
-
-        }
-
         private void UnSubscribeEvents()
         {
             UISignals.Instance.onSetNewLevelValue -= OnSetNewLevelValue;
@@ -50,5 +43,30 @@ namespace Controllers.UI
         {
             UnSubscribeEvents();
         }
+        
+        private void OnSetNewLevelValue(int levelValue)
+        {
+            if (levelValue <= 0) levelValue = 1;
+
+            levelTexts[0].text = levelValue.ToString();
+            var value = ++levelValue;
+            levelTexts[1].text = value.ToString();
+        }
+        
+        [Button("OnSetStageColor")]
+        private void OnSetStageColor(int stageValue)
+        {
+            stageImages[stageValue].DOColor(Color.red, .35f).SetEase(Ease.Linear);
+        }
+        
+        private void OnResetStageColor()
+        {
+            for (int i = 0; i < stageImages.Count; i++)
+            {
+                stageImages[i].color = Color.white;
+            }
+        }
+
+        
     }
 }
